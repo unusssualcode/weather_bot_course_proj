@@ -6,23 +6,11 @@ from aiogram.types import (
 )
 from aiogram.utils.keyboard import ReplyKeyboardBuilder, InlineKeyboardBuilder
 
-MAIN_BUTTON_GET_WEATHER = "🌤 Get Weather"
-MAIN_BUTTON_MY_ADDRESSES = "📍 My Addresses"
-MAIN_BUTTON_ADD_ADDRESS = "➕ Add Address"
-MAIN_BUTTON_HELP = "ℹ️ Help"
-MAIN_BUTTON_CANCEL = "❌ Cancel"
-
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
     kb = [
-        [
-            KeyboardButton(text=MAIN_BUTTON_GET_WEATHER),
-            KeyboardButton(text=MAIN_BUTTON_MY_ADDRESSES),
-        ],
-        [
-            KeyboardButton(text=MAIN_BUTTON_ADD_ADDRESS),
-            KeyboardButton(text=MAIN_BUTTON_HELP),
-        ],
+        [KeyboardButton(text="🌤 Get Weather"), KeyboardButton(text="📍 My Addresses")],
+        [KeyboardButton(text="➕ Add Address"), KeyboardButton(text="ℹ️ Help")],
     ]
 
     keyboard = ReplyKeyboardMarkup(
@@ -33,7 +21,7 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
 
 
 def get_cancel_keyboard() -> ReplyKeyboardMarkup:
-    kb = [[KeyboardButton(text=MAIN_BUTTON_CANCEL)]]
+    kb = [[KeyboardButton(text="❌ Cancel")]]
     keyboard = ReplyKeyboardMarkup(
         keyboard=kb,
         resize_keyboard=True,

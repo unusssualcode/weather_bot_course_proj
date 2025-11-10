@@ -6,11 +6,6 @@ from aiogram.fsm.context import FSMContext
 from database import db
 from weather import weather_api
 from keyboards import (
-    MAIN_BUTTON_ADD_ADDRESS,
-    MAIN_BUTTON_CANCEL,
-    MAIN_BUTTON_GET_WEATHER,
-    MAIN_BUTTON_HELP,
-    MAIN_BUTTON_MY_ADDRESSES,
     get_main_keyboard,
     get_cancel_keyboard,
     get_addresses_keyboard,
@@ -51,7 +46,7 @@ async def cmd_help(message: Message):
     await message.answer(help_text, parse_mode="HTML")
 
 
-@router.message(F.text == MAIN_BUTTON_GET_WEATHER)
+@router.message(F.text == "Get Weather")
 async def btn_get_weather(message: Message, state: FSMContext):
     await message.answer(
         "Enter city name to get weather:", reply_markup=get_cancel_keyboard()
@@ -59,7 +54,7 @@ async def btn_get_weather(message: Message, state: FSMContext):
     await state.set_state(WeatherStates.waiting_for_address)
 
 
-@router.message(F.text == MAIN_BUTTON_MY_ADDRESSES)
+@router.message(F.text == "My Addresses")
 async def btn_my_addresses(message: Message):
     if not message.from_user:
         return
@@ -81,7 +76,7 @@ async def btn_my_addresses(message: Message):
     )
 
 
-@router.message(F.text == MAIN_BUTTON_ADD_ADDRESS)
+@router.message(F.text == "Add Address")
 async def btn_add_address(message: Message, state: FSMContext):
     await message.answer(
         "📝 Enter city or address to save:", reply_markup=get_cancel_keyboard()
@@ -89,12 +84,12 @@ async def btn_add_address(message: Message, state: FSMContext):
     await state.set_state(WeatherStates.waiting_for_address)
 
 
-@router.message(F.text == MAIN_BUTTON_HELP)
+@router.message(F.text == "Help")
 async def btn_help(message: Message):
     await cmd_help(message)
 
 
-@router.message(F.text == MAIN_BUTTON_CANCEL)
+@router.message(F.text == "Cancel")
 async def btn_cancel(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(" Cancelled.", reply_markup=get_main_keyboard())
@@ -224,15 +219,7 @@ async def callback_cancel_delete(callback: CallbackQuery):
 
 
 @router.message(
-    ~F.text.in_(
-        [
-            MAIN_BUTTON_GET_WEATHER,
-            MAIN_BUTTON_MY_ADDRESSES,
-            MAIN_BUTTON_ADD_ADDRESS,
-            MAIN_BUTTON_HELP,
-            MAIN_BUTTON_CANCEL,
-        ]
-    )
+    ~F.text.in_(["Get Weather", "My Addresses", "Add Address", "Help", "Cancel"])
 )
 async def handle_text(message: Message):
 
