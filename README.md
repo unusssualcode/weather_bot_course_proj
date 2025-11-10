@@ -32,29 +32,40 @@
 - Dependencies listed in `requirements.txt`
 
 ## 🚀 Quick Start
-1. **Clone**
-   ```bash
+### 1. Clone
+
+```bash
 git clone https://github.com/your-org/weather_bot.git
 cd weather_bot
-   ```
-2. **Create venv**
-   ```bash
+```
+
+### 2. Create virtual environment
+
+```bash
 python3 -m venv .venv
 source .venv/bin/activate
-   ```
-3. **Install deps**
-   ```bash
+```
+
+### 3. Install dependencies
+
+```bash
 pip install -r requirements.txt
-   ```
-4. **Configure `.env`**
-   ```bash
+```
+
+### 4. Configure environment variables
+
+```bash
+cat <<'EOF' > .env
 BOT=1234567890:your-telegram-bot-token
 WEATHER_API_KEY=your-openweather-api-key
-   ```
-5. **Launch**
-   ```bash
+EOF
+```
+
+### 5. Launch the bot
+
+```bash
 python main.py
-   ```
+```
 
 > 🗄 First run will initialise `weather_bot.db` with all tables.
 
