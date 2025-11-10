@@ -1,120 +1,133 @@
-# Weather Bot
+# ⛅️ Weather Bot
 
-A Telegram assistant that delivers real-time weather updates, manages your frequently used locations, and keeps the conversation friendly. Built with Aiogram 3, SQLite, and the OpenWeather API.
+[![Aiogram](https://img.shields.io/badge/Aiogram-3.22-2b5278)](https://docs.aiogram.dev/)
+[![Python](https://img.shields.io/badge/Python-3.13%2B-3776ab?logo=python&logoColor=white)](https://www.python.org/)
+[![OpenWeather](https://img.shields.io/badge/OpenWeather-API-orange)](https://openweathermap.org/api)
+[![SQLite](https://img.shields.io/badge/SQLite-embedded-003b57?logo=sqlite&logoColor=white)](https://www.sqlite.org/index.html)
 
-## Key Features
-- Onboard users instantly with `/start` and persist their profile in SQLite.
-- Fetch real-time weather conditions for any city using OpenWeather.
-- Save, list, and remove frequently used locations with inline keyboards.
-- Offer guided workflows via custom reply keyboards and FSM states.
-- Provide robust error messaging for invalid input, API failures, and missing credentials.
+> 🌍 A Telegram companion that delivers live weather briefings, remembers your go-to spots, and keeps conversations delightful.
 
-## Architecture Overview
-The bot is organised into discrete modules to keep concerns separated and extensible:
-- `main.py`: entry point, dispatcher wiring, and lifecycle hooks.
-- `handlers.py`: command handlers, button callbacks, and FSM transitions.
-- `database.py`: lightweight SQLite wrapper responsible for users and addresses.
-- `weather.py`: asynchronous OpenWeather client plus message formatting.
-- `keyboards.py`: reply and inline keyboard factories.
-- `states.py`: finite state machine definition for interactive flows.
-- `config.py`: environment loader that validates tokens.
+## ✨ Highlights
+- ⚡️ Instant onboarding with `/start`, persisting Telegram profiles in SQLite.
+- 🌦 Real-time city forecasts powered by the OpenWeather API.
+- 📍 Smart address book with save, list, and delete controls via inline keyboards.
+- 🧭 Guided journeys using reply keyboards and AIogram FSM states.
+- 🛡 Defensive messaging for invalid input, API issues, and credential problems.
 
-SQLite is used for persistence, while OpenWeather supplies weather data. Aiogram 3 handles the Telegram bot runtime with asynchronous updates.
+## 🧱 Architecture
+- `main.py`: dispatcher bootstrap, lifecycle hooks, logging.
+- `handlers.py`: slash commands, button callbacks, FSM transitions.
+- `database.py`: SQLite wrapper for users and saved addresses.
+- `weather.py`: async OpenWeather client and HTML-rich message builder.
+- `keyboards.py`: reply/inline keyboard factories.
+- `states.py`: FSM definition for conversational steps.
+- `config.py`: dotenv loader that validates required tokens.
 
-## Requirements
+> 🧩 Storage is handled by SQLite, weather data by OpenWeather, and the dialogue engine by Aiogram 3.
+
+## 📦 Requirements
 - Python 3.13+
+- Telegram bot token (BotFather)
 - OpenWeather API key
-- Telegram Bot token (via BotFather)
+- Dependencies listed in `requirements.txt`
 
-All Python dependencies are listed in `requirements.txt`.
-
-## Quick Start
-1. **Clone the repository**
+## 🚀 Quick Start
+1. **Clone**
    ```bash
 git clone https://github.com/your-org/weather_bot.git
 cd weather_bot
    ```
-2. **Create a virtual environment**
+2. **Create venv**
    ```bash
 python3 -m venv .venv
 source .venv/bin/activate
    ```
-3. **Install dependencies**
+3. **Install deps**
    ```bash
 pip install -r requirements.txt
    ```
-4. **Provide environment variables** by creating a `.env` file in the project root:
+4. **Configure `.env`**
    ```bash
 BOT=1234567890:your-telegram-bot-token
 WEATHER_API_KEY=your-openweather-api-key
    ```
-5. **Run the bot**
+5. **Launch**
    ```bash
 python main.py
    ```
 
-On first launch the bot will create `weather_bot.db` with the required tables.
+> 🗄 First run will initialise `weather_bot.db` with all tables.
 
-## Runtime Configuration
-- `BOT`: Telegram bot token obtained from BotFather.
-- `WEATHER_API_KEY`: OpenWeather API key (metric units are used).
+## ⚙️ Runtime Variables
+- `BOT`: Telegram bot token.
+- `WEATHER_API_KEY`: OpenWeather credential (metric mode).
 
-`config.py` loads the values and raises an error if either is missing, ensuring misconfiguration is caught early.
+`config.py` aborts early if either value is missing, preventing silent failures.
 
-## Database Notes
-- Uses SQLite (`weather_bot.db`) located in the project root.
-- Table `users` stores Telegram user metadata.
-- Table `user_addresses` persists saved locations linked to user IDs.
-- Tables are created automatically during `on_startup()`.
+## 🗃 Database Snapshot
+- `users`: Telegram user metadata and timestamps.
+- `user_addresses`: saved locations bound to user IDs.
+- Schema auto-creates during `on_startup()`.
 
-No manual migrations are required. Back up or remove `weather_bot.db` to reset state.
+Reset the bot by removing `weather_bot.db` (a new one will be generated).
 
-## Bot Usage
-### Commands
-- `/start`: registers the user and displays the main menu.
-- `/help`: shows concise usage instructions and button descriptions.
+## 💬 Bot Usage
+### 🧾 Commands
+- `/start`: greets and renders the main menu.
+- `/help`: displays quick guidance and button actions.
 
-### Main Menu Buttons
-- `Get Weather`: prompts for a city name and returns formatted weather data.
-- `My Addresses`: lists saved locations with buttons to fetch or delete weather entries.
-- `Add Address`: saves a new city/address and immediately fetches its conditions.
-- `Help`: mirrors `/help` for quick access.
-- `Cancel`: exits the current flow and restores the main menu.
+### 🕹 Main Menu Buttons
+- `🌤 Get Weather`: asks for a city and returns a formatted forecast.
+- `📍 My Addresses`: lists saved spots with quick weather/delete buttons.
+- `➕ Add Address`: saves a location and fetches its weather instantly.
+- `ℹ️ Help`: mirrors `/help` for convenience.
+- `❌ Cancel`: exits current flow and restores the main menu.
 
-### Inline Actions
-- `🌡 city`: fetches weather for the selected saved address.
-- `🗑`: triggers a confirmation dialog before deleting the address.
-- `Yes, delete`: removes the address from storage.
-- `Cancel`: aborts the deletion and reloads the saved addresses list.
+### 🔄 Inline Controls
+- `🌡 city`: fetches stored-location weather.
+- `🗑`: prompts a confirmation dialog before deletion.
+- `Yes, delete`: removes the address.
+- `Cancel`: aborts deletion and reloads the list.
 
-Messages are enriched with emojis and HTML formatting to improve readability. FSM states ensure that user input is validated before saving addresses or making API calls.
+## 🎞 Flow Highlights
+```
+🌅 0s  → User taps /start
+💬 1s  → Bot greets and shows menu
+🌤 3s  → User selects Get Weather
+🔍 5s  → Address submitted, API queried
+📦 7s  → Forecast delivered with HTML styling
+📌 9s  → Location autosaved for future use
+```
 
-## Error Handling
-The bot responds with descriptive messages when:
-- A city cannot be found (`404` from OpenWeather).
-- The API key is invalid (`401`).
-- Network errors occur during the HTTP request.
-- SQLite operations fail during save or delete actions.
+> 🧠 FSM guards each step so inputs are validated before database or API work happens.
 
-Errors are logged via Python's `logging` subsystem to aid debugging.
+## 🚨 Error Handling
+- ❌ City not found (`404` from OpenWeather).
+- 🔐 Invalid API key (`401`).
+- 🌐 Network-level issues handled via `aiohttp` exceptions.
+- 🧱 SQLite insert/delete failures reported gracefully.
 
-## Extending the Bot
-- Add new commands by registering handlers in `handlers.py` and updating keyboards accordingly.
-- Expand persistence by augmenting `Database` with additional tables or queries.
-- Introduce scheduled forecasts by adding background tasks inside `main.py` (e.g., using `asyncio.create_task`).
+All events are logged with Python `logging` for easier diagnostics.
 
-## Troubleshooting
-- **`ValueError: BOT_TOKEN not found in .env file`**: ensure `.env` exists and the token is spelled correctly.
-- **`Invalid API key`**: verify `WEATHER_API_KEY` matches the one from OpenWeather.
-- **`Connection error`**: check network connectivity or firewall settings.
-- **`Address not found`**: confirm the location spelling; the bot preserves the raw string to simplify matching.
+## 🛠 Extending
+- ➕ Register new handlers in `handlers.py`, update keyboards, and reuse FSM states.
+- 🗄 Enhance persistence by expanding `Database` with extra tables or indexes.
+- 📅 Schedule forecasts via background tasks (e.g., `asyncio.create_task`).
 
-Restart the bot after updating environment variables or dependencies.
+## 🧯 Troubleshooting
+| Issue | Fix |
+| --- | --- |
+| `ValueError: BOT_TOKEN not found` | Confirm `.env` exists and contains a valid token. |
+| `Invalid API key` response | Reissue OpenWeather key and update `.env`. |
+| `Connection error` | Check network reachability and firewall rules. |
+| Address not removed | Ensure callback data matches an existing entry; retry after refresh. |
 
-## Deployment Tips
-- Use systemd, Docker, or a process manager (e.g., Supervisor) to keep the bot running.
-- Secure `.env` and database files with restricted file permissions.
-- Regularly rotate tokens and backup `weather_bot.db` if persistent history matters.
+> ♻️ Restart the bot after updating environment variables or packages.
 
-## License
-Specify your project license here (e.g., MIT, Apache 2.0). If none is provided, clarify that the project is currently unlicensed.
+## 🌐 Deployment Tips
+- 🧠 Run under systemd, Docker, or Supervisor for automatic restarts.
+- 🔒 Keep `.env` and `weather_bot.db` outside public directories; restrict file permissions.
+- ♻️ Rotate tokens regularly; back up the SQLite database if historical data matters.
+
+## 📜 License
+Specify the licence that applies to this project (e.g., MIT, Apache 2.0). Without an explicit licence, usage defaults to **all rights reserved**.
